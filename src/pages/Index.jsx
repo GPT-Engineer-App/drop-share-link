@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { Container, VStack, Text, Box, Image, IconButton } from "@chakra-ui/react";
+import { Container, VStack, Text, Box, Image, IconButton, Button } from "@chakra-ui/react";
+import emailjs from "emailjs-com";
 import { FaTrash } from "react-icons/fa";
 
 const Index = () => {
@@ -12,6 +13,22 @@ const Index = () => {
 
   const removeFile = (file) => {
     setFiles((prevFiles) => prevFiles.filter((f) => f !== file));
+  };
+
+  const sendEmail = () => {
+    const formData = new FormData();
+    files.forEach((file, index) => {
+      formData.append(`file${index}`, file);
+    });
+
+    emailjs.sendForm("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", formData, "YOUR_USER_ID").then(
+      (result) => {
+        console.log(result.text);
+      },
+      (error) => {
+        console.log(error.text);
+      },
+    );
   };
 
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
@@ -31,6 +48,9 @@ const Index = () => {
             </Box>
           ))}
         </VStack>
+        <Button colorScheme="blue" onClick={sendEmail}>
+          Submit
+        </Button>
       </VStack>
     </Container>
   );
